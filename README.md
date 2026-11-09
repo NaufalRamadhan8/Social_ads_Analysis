@@ -1,37 +1,51 @@
-# Social Media Ads Analyst Project (Meta Ads vs TikTok Ads) - Data Sintesis
-
-Brand fiktif: fashion e-commerce Indonesia (IDR), periode 1 Agu - 31 Okt 2026.
-
-## Alur pipeline
-| Langkah | File | Output |
-|---|---|---|
-| 1. Ambil data (sintesis, meniru format export asli) | `01_generate_data.py` | `data/raw/meta_ads_export.csv`, `data/raw/tiktok_ads_export.csv` |
-| 2. ETL: rename kolom, samakan tanggal, dedup, imputasi, validasi | `02_etl_clean.py` | `data/clean/ads_unified.csv` |
-| 3. Analisis, uji statistik, chart | `03_analysis.py` | `reports/*.csv`, `reports/charts/*.png`, `reports/analysis_summary.txt` |
-
-Jalankan: `pip install pandas numpy matplotlib scipy` lalu `python 01_generate_data.py && python 02_etl_clean.py && python 03_analysis.py`
-
-## Perbedaan skema kedua platform (inti pekerjaan ETL)
-| Konsep | Meta | TikTok | Skema terpadu |
-|---|---|---|---|
-| Tanggal | `Day` (YYYY-MM-DD) | `stat_time_day` (DD/MM/YYYY) | `date` |
-| Biaya | `Amount spent (IDR)` | `spend` | `spend` |
-| Klik | `Link clicks` | `clicks` | `clicks` |
-| Pembelian | `Purchases` | `complete_payment` | `purchases` |
-| Nilai pembelian | `Purchases conversion value` | `complete_payment_value` | `revenue` |
-| Ad group | `Ad set name` | `adgroup_name` | `ad_group` |
-| Video view | (tidak ada) | `video_views_p6s` | `video_views_6s` |
-
-## Masalah data yang sengaja disisipkan (latihan cleaning)
-Baris duplikat, `impressions` kosong, nama campaign beda huruf besar/kecil dan ada spasi, format tanggal beda.
-
-## Rumus KPI
-CPM = spend/impressions x 1000 | CTR = clicks/impressions | CPC = spend/clicks | CVR = purchases/clicks |
-CPA = spend/purchases | ROAS = revenue/spend | AOV = revenue/purchases.
-Selalu jumlahkan dulu lalu bagi; jangan merata-ratakan rasio harian.
-
-## Langkah lanjutan
-1. Ganti langkah 1 dengan data asli: Meta Marketing API (`/insights`) dan TikTok Marketing API (`/report/integrated/get/`), atau export CSV manual.
-2. Dashboard (Looker Studio / Power BI / Streamlit) dari `ads_unified.csv`.
-3. Simpan ke database (SQLite/PostgreSQL) dan tulis query SQL untuk KPI.
-4. Model: forecasting spend/ROAS, diminishing returns per channel, simulasi realokasi budget.
+Analisis Performa Iklan Meta Ads vs TikTok Ads
+> **Catatan:** Seluruh data di project ini adalah **data sintesis** yang saya buat untuk mensimulasikan format export Meta Ads Manager dan TikTok Ads Manager. Brand dan angkanya fiktif (fashion e-commerce Indonesia, mata uang IDR, periode 1 Agustus - 31 Oktober 2026). Tujuan project ini adalah menunjukkan alur kerja analisis iklan, bukan mengklaim hasil dari klien nyata.
+Pertanyaan bisnis
+Budget iklan dibagi ke dua platform, Meta dan TikTok. Platform dan jenis kreatif mana yang paling efisien, dan ke mana budget sebaiknya digeser?
+Pendekatan
+Pengambilan data: membuat dua file export dengan struktur kolom yang berbeda, seperti kondisi asli (`Amount spent (IDR)` vs `spend`, `Purchases` vs `complete_payment`, format tanggal berbeda).
+Pembersihan (ETL): menyamakan nama kolom dan tanggal, membuang duplikat, merapikan nama campaign, mengisi nilai yang hilang, lalu menggabungkan semuanya menjadi satu tabel (4.180 baris).
+Analisis: menghitung CPM, CTR, CPC, CVR, CPA, ROAS, dan AOV. Rasio dihitung dari total (jumlahkan dulu, baru dibagi), bukan rata-rata rasio harian. Perbandingan platform diuji dengan Welch t-test.
+Rekomendasi: disusun dari hasil per platform, tipe campaign, dan format kreatif.
+Temuan utama
+#	Temuan	Angka
+1	Meta dan TikTok setara secara efisiensi	ROAS 2,69 vs 2,75 (p = 0,63, tidak signifikan)
+2	Cara mencapainya berbeda	TikTok: CPM dan CPC lebih murah. Meta: CVR lebih tinggi (4,5% vs 2,2%)
+3	Retargeting jauh lebih efisien dari prospecting	ROAS sekitar 7 vs sekitar 1,8 di kedua platform
+4	Format kreatif bekerja beda per platform	TikTok: UGC Video 4,22 dan Influencer Video 4,01, Static Promo hanya 1,19. Meta: Carousel 3,09 dan Influencer Video 3,04
+5	Creative fatigue nyata	CTR turun sekitar 33% pada ad yang berumur lebih dari 42 hari
+6	Hari event (9.9 dan 10.10) menurunkan CPA	Meta sekitar 19%, TikTok sekitar 22%
+Visualisasi
+Tren mingguan ROAS dan spend
+![Tren mingguan](reports/charts/01_weekly_roas_spend.png)
+CPA dan ROAS per tipe campaign
+![Tipe campaign](reports/charts/02_campaign_type.png)
+ROAS per format kreatif dan platform
+![Heatmap kreatif](reports/charts/03_creative_heatmap.png)
+Creative fatigue
+![Creative fatigue](reports/charts/04_creative_fatigue.png)
+Funnel
+![Funnel](reports/charts/05_funnel.png)
+Rekomendasi
+TikTok: kurangi budget Static Promo dan Carousel, alihkan ke UGC Video dan Influencer Video.
+Meta: prioritaskan Carousel dan Influencer Video, kurangi Static Promo di campaign prospecting.
+Retargeting: naikkan budget secara bertahap sambil memantau frekuensi dan ROAS, karena ukuran audiensnya terbatas.
+Kreatif: jadwalkan pergantian kreatif sekitar setiap 4 minggu agar CTR tidak turun jauh.
+Event: siapkan budget lebih besar dan kreatif baru 2-3 hari sebelum tanggal kembar.
+Keterbatasan
+Data sintesis, sehingga pola di dalamnya mengikuti asumsi saya, bukan perilaku pasar nyata.
+Meta dan TikTok memakai jendela atribusi berbeda, jadi perbandingan ROAS pada data nyata perlu diperlakukan hati-hati.
+Analisis ini tidak mengukur kontribusi inkremental iklan (misalnya lewat uji holdout).
+Dashboard
+[Tambahkan link dashboard Looker Studio di sini]
+Struktur project
+File	Fungsi
+`01_generate_data.py`	Membuat data export Meta dan TikTok (sintesis)
+`02_etl_clean.py`	Membersihkan dan menggabungkan data
+`03_analysis.py`	Menghitung KPI, uji statistik, dan membuat chart
+`data/raw/`	Data mentah
+`data/clean/ads_unified.csv`	Data gabungan siap analisis
+`reports/`	Tabel KPI dan chart
+Cara menjalankan: `pip install pandas numpy matplotlib scipy`, lalu `python 01_generate_data.py && python 02_etl_clean.py && python 03_analysis.py`
+Alat yang dipakai
+Python (pandas, numpy, matplotlib, scipy), Looker Studio.
