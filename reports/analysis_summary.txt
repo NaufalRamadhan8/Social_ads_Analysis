@@ -1,0 +1,66 @@
+## 1. KPI per platform
+                 spend       revenue       CPM  CTR_%      CPC  CVR_%        CPA  ROAS
+platform                                                                              
+Meta      9.793130e+08  2.631821e+09  44060.73   0.96  4599.20   4.53  101462.18  2.69
+TikTok    9.632990e+08  2.647213e+09  25301.23   1.28  1981.52   2.22   89376.42  2.75
+
+## 2. Platform x tipe campaign
+                               spend  CTR_%  CVR_%        CPA  ROAS
+platform campaign_type                                             
+Meta     Awareness      1.012605e+08   0.83   2.93  174888.54  1.56
+         Prospecting    7.116157e+08   0.90   3.18  147180.08  1.85
+         Retargeting    1.664368e+08   1.41  10.36   39272.50  6.97
+TikTok   Awareness      1.021078e+08   1.07   1.41  157817.34  1.56
+         Prospecting    6.802296e+08   1.19   1.51  134912.65  1.83
+         Retargeting    1.809616e+08   1.88   4.82   35559.37  6.87
+
+## 3. Platform x format kreatif
+                                  spend  CTR_%  CVR_%        CPA  ROAS
+platform creative_format                                              
+Meta     Carousel          2.357837e+08   0.94   5.24   88573.87  3.09
+         Influencer_Video  2.539494e+08   1.12   4.42   89608.13  3.04
+         Static_Promo      2.397034e+08   0.78   4.65  122987.87  2.23
+         UGC_Video         2.498765e+08   0.98   3.93  113219.99  2.39
+TikTok   Carousel          2.469523e+08   0.93   1.93  142417.72  1.72
+         Influencer_Video  2.274815e+08   1.81   2.27   61481.48  4.01
+         Static_Promo      2.482423e+08   0.72   1.70  206352.68  1.19
+         UGC_Video         2.406230e+08   1.69   2.55   58107.46  4.22
+
+## 4. Uji Welch t-test ROAS harian
+Meta rata-rata 2.66 vs TikTok 2.70 | t=-0.49, p=0.626 -> tidak berbeda signifikan (alpha 0.05)
+
+## 5. Hari event (9.9 & 10.10) vs hari biasa
+                        CPM  CVR_%        CPA  ROAS
+platform is_event                                  
+Meta     False     43830.06   4.46  102562.08  2.65
+         True      49328.19   6.24   83329.79  3.49
+TikTok   False     25181.56   2.18   90626.03  2.70
+         True      27863.19   3.11   70554.11  3.73
+
+## 6. Creative fatigue (umur ad)
+                     CTR_%         CPA   ROAS
+platform age_bucket                          
+Meta     0-13        1.188   82638.559  3.302
+         14-27       1.098   84297.492  3.221
+         28-41       0.978   98339.064  2.788
+         42+         0.801  124818.953  2.183
+TikTok   0-13        1.586   72435.304  3.413
+         14-27       1.447   79355.108  3.016
+         28-41       1.305   89244.046  2.721
+         42+         1.059  105678.905  2.362
+
+## 7. Top 5 kombinasi (scale up)
+platform campaign_type  creative_format       spend  ROAS      CPA
+  TikTok   Retargeting        UGC_Video 39660277.28 12.78 18921.89
+  TikTok   Retargeting Influencer_Video 43709049.71  9.77 25091.30
+    Meta   Retargeting         Carousel 35779012.00  9.25 29915.56
+    Meta   Retargeting Influencer_Video 46232947.00  7.93 34322.90
+    Meta   Retargeting     Static_Promo 46829007.00  5.54 49871.15
+
+## 8. Bottom 5 kombinasi (kurangi / optimasi)
+platform campaign_type creative_format        spend  ROAS       CPA
+  TikTok     Awareness    Static_Promo  29377293.49  0.57 432019.02
+  TikTok   Prospecting    Static_Promo 172164979.68  0.79 306343.38
+  TikTok     Awareness        Carousel  29150012.68  1.22 198299.41
+  TikTok   Prospecting        Carousel 166909998.51  1.33 183619.36
+    Meta   Prospecting    Static_Promo 168999007.00  1.40 193806.20
